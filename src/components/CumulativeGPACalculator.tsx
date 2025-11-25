@@ -13,7 +13,7 @@ import {
   getGradingScaleByUniversity 
 } from '@/data/gradingData';
 import { convertToECTS, calculateCumulativeECTS } from '@/lib/conversionEngine';
-import { TrendingUp, Plus, Trash2, Award, Calculator } from 'lucide-react';
+import { TrendingUp, Plus, Award, Calculator } from 'lucide-react';
 
 interface SemesterGrade {
   id: string;
@@ -25,9 +25,10 @@ interface SemesterGrade {
 export const CumulativeGPACalculator = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
-  const [semesterGrades, setSemesterGrades] = useState<SemesterGrade[]>([
-    { id: '1', semester: 'Semester 1', grade: 0, weight: 1 }
-  ]);
+  const [numberOfSemesters, setNumberOfSemesters] = useState<number>(0);
+  const [numberOfYears, setNumberOfYears] = useState<number>(0);
+  const [showInputs, setShowInputs] = useState<boolean>(false);
+  const [semesterGrades, setSemesterGrades] = useState<SemesterGrade[]>([]);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string>('');
 
@@ -35,18 +36,25 @@ export const CumulativeGPACalculator = () => {
   const universities = selectedCountry ? getUniversitiesByCountry(selectedCountry) : [];
   const gradingScale = selectedUniversity ? getGradingScaleByUniversity(selectedUniversity) : null;
 
-  const addSemester = () => {
-    const newId = (semesterGrades.length + 1).toString();
-    setSemesterGrades([
-      ...semesterGrades,
-      { id: newId, semester: `Semester ${newId}`, grade: 0, weight: 1 }
-    ]);
-  };
-
-  const removeSemester = (id: string) => {
-    if (semesterGrades.length > 1) {
-      setSemesterGrades(semesterGrades.filter(sg => sg.id !== id));
+  const generateSemesterInputs = () => {
+    if (numberOfSemesters <= 0) {
+      setError('Please enter a valid number of semesters');
+      return;
     }
+    
+    const semesters: SemesterGrade[] = [];
+    for (let i = 1; i <= numberOfSemesters; i++) {
+      semesters.push({
+        id: i.toString(),
+        semester: `Semester ${i}`,
+        grade: 0,
+        weight: 1
+      });
+    }
+    setSemesterGrades(semesters);
+    setShowInputs(true);
+    setResult(null);
+    setError('');
   };
 
   const updateSemester = (id: string, field: keyof SemesterGrade, value: string | number) => {
@@ -109,12 +117,16 @@ export const CumulativeGPACalculator = () => {
   const handleCountryChange = (value: string) => {
     setSelectedCountry(value);
     setSelectedUniversity('');
+    setShowInputs(false);
+    setSemesterGrades([]);
     setResult(null);
     setError('');
   };
 
   const handleUniversityChange = (value: string) => {
     setSelectedUniversity(value);
+    setShowInputs(false);
+    setSemesterGrades([]);
     setResult(null);
     setError('');
   };
@@ -167,18 +179,64 @@ export const CumulativeGPACalculator = () => {
             </div>
           </div>
 
+          {/* Initial Setup */}
+          {gradingScale && !showInputs && (
+            <>
+              <Separator className="bg-border" />
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Setup Your Calculation</h3>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="semesters" className="text-foreground">Number of Semesters</Label>
+                    <Input
+                      id="semesters"
+                      type="number"
+                      min="1"
+                      value={numberOfSemesters || ''}
+                      onChange={(e) => setNumberOfSemesters(parseInt(e.target.value) || 0)}
+                      placeholder="e.g., 8"
+                      className="bg-background border-border text-foreground"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="years" className="text-foreground">Number of Years</Label>
+                    <Input
+                      id="years"
+                      type="number"
+                      min="1"
+                      value={numberOfYears || ''}
+                      onChange={(e) => setNumberOfYears(parseInt(e.target.value) || 0)}
+                      placeholder="e.g., 4"
+                      className="bg-background border-border text-foreground"
+                    />
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={generateSemesterInputs} 
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Generate Semester Inputs
+                </Button>
+              </div>
+            </>
+          )}
+
           {/* Semester Grades Input */}
-          {gradingScale && (
+          {gradingScale && showInputs && semesterGrades.length > 0 && (
             <>
               <Separator className="bg-border" />
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-foreground">Semester Grades</h3>
-                  <Button onClick={addSemester} size="sm" variant="outline" className="border-border">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Semester
-                  </Button>
+                  <h3 className="text-lg font-semibold text-foreground">Enter Semester Grades</h3>
+                  <Badge variant="outline" className="border-border text-foreground">
+                    {numberOfYears} {numberOfYears === 1 ? 'Year' : 'Years'} • {numberOfSemesters} {numberOfSemesters === 1 ? 'Semester' : 'Semesters'}
+                  </Badge>
                 </div>
 
                 <div className="space-y-3">
@@ -219,16 +277,6 @@ export const CumulativeGPACalculator = () => {
                           className="bg-card border-border text-foreground"
                         />
                       </div>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeSemester(sg.id)}
-                        disabled={semesterGrades.length === 1}
-                        className="hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
                   ))}
                 </div>
