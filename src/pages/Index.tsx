@@ -3,15 +3,13 @@ import { ECTSReference } from '@/components/ECTSReference';
 import { CumulativeGPACalculator } from '@/components/CumulativeGPACalculator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, BookOpen, TrendingUp } from 'lucide-react';
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-12">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+            <h1 className="text-4xl md:text-5xl font-bold text-emerald-600">
               African to ECTS Grade Converter
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -63,8 +61,6 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
