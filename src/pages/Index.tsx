@@ -59,6 +59,9 @@ const Index = () => {
           <p className="text-center text-sm text-muted-foreground">
             Built for accurate and transparent grade conversion across African and European education systems
           </p>
+          <p>
+            Don't let wrong grade calculations hinder your Europe Admissions!! @Ectstogradesconverter
+          </p>
         </div>
       </footer>
     </div>;
