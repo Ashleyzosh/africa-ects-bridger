@@ -59,7 +59,9 @@ const Index = () => {
           <p className="text-center text-sm text-muted-foreground">
             Built for accurate and transparent grade conversion across African and European education systems
           </p>
-          <p>
+          </div>
+          <div className="container mx-auto px-4 py-6">
+          <p className="text-center text-sm text-muted-foreground">
             Don't let wrong grade calculations hinder your Europe Admissions!! @Ectstogradesconverter
           </p>
         </div>
