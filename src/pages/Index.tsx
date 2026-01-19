@@ -1,71 +1,116 @@
+import { useRef } from 'react';
 import { GradeConverter } from '@/components/GradeConverter';
 import { ECTSReference } from '@/components/ECTSReference';
 import { CumulativeGPACalculator } from '@/components/CumulativeGPACalculator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, BookOpen, TrendingUp } from 'lucide-react';
+
+// Landing page sections
+import { HeroSection } from '@/components/landing/HeroSection';
+import { ValueProposition } from '@/components/landing/ValueProposition';
+import { HowItWorks } from '@/components/landing/HowItWorks';
+import { WhatIsECTS } from '@/components/landing/WhatIsECTS';
+import { BenefitsSection } from '@/components/landing/BenefitsSection';
+import { TrustSignals } from '@/components/landing/TrustSignals';
+import { FAQSection } from '@/components/landing/FAQSection';
+import { FinalCTA } from '@/components/landing/FinalCTA';
+import { Footer } from '@/components/landing/Footer';
+
 const Index = () => {
-  return <div className="min-h-screen bg-background">
+  const converterRef = useRef<HTMLDivElement>(null);
+  const ectsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToConverter = () => {
+    converterRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToECTS = () => {
+    ectsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-12">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-emerald-600">
-              African to ECTS Grade Converter
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Convert university grades from African institutions to the German ECTS grading system with precision and transparency
+      <HeroSection 
+        onConvertClick={scrollToConverter}
+        onLearnMoreClick={scrollToECTS}
+      />
+
+      {/* Value Proposition */}
+      <ValueProposition />
+
+      {/* How It Works */}
+      <HowItWorks />
+
+      {/* Main Converter Tool */}
+      <section ref={converterRef} id="converter" className="py-16 bg-card border-y border-border">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Convert Your Grades Now
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Select your institution, enter your grade, and get your ECTS equivalent instantly.
             </p>
           </div>
+
+          <Tabs defaultValue="converter" className="w-full">
+            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-8 bg-muted">
+              <TabsTrigger value="converter" className="data-[state=active]:bg-background">
+                <Calculator className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Single Grade</span>
+                <span className="sm:hidden">Convert</span>
+              </TabsTrigger>
+              <TabsTrigger value="cumulative" className="data-[state=active]:bg-background" id="cumulative">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Cumulative GPA</span>
+                <span className="sm:hidden">GPA</span>
+              </TabsTrigger>
+              <TabsTrigger value="reference" className="data-[state=active]:bg-background" id="reference">
+                <BookOpen className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Reference</span>
+                <span className="sm:hidden">Guide</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="converter" className="space-y-6">
+              <GradeConverter />
+            </TabsContent>
+
+            <TabsContent value="cumulative" className="space-y-6">
+              <CumulativeGPACalculator />
+            </TabsContent>
+
+            <TabsContent value="reference" className="space-y-6">
+              <div className="max-w-4xl mx-auto">
+                <ECTSReference />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
-      </header>
+      </section>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="converter" className="w-full">
-          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-8 bg-muted">
-            <TabsTrigger value="converter" className="data-[state=active]:bg-background">
-              <Calculator className="h-4 w-4 mr-2" />
-              Converter
-            </TabsTrigger>
-            <TabsTrigger value="cumulative" className="data-[state=active]:bg-background">
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Cumulative GPA
-            </TabsTrigger>
-            <TabsTrigger value="reference" className="data-[state=active]:bg-background">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Reference
-            </TabsTrigger>
-          </TabsList>
+      {/* What is ECTS - Educational Content */}
+      <div ref={ectsRef}>
+        <WhatIsECTS />
+      </div>
 
-          <TabsContent value="converter" className="space-y-6">
-            <GradeConverter />
-          </TabsContent>
+      {/* Benefits */}
+      <BenefitsSection />
 
-          <TabsContent value="cumulative" className="space-y-6">
-            <CumulativeGPACalculator />
-          </TabsContent>
+      {/* Trust Signals & Testimonials */}
+      <TrustSignals />
 
-          <TabsContent value="reference" className="space-y-6">
-            <div className="max-w-4xl mx-auto">
-              <ECTSReference />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
+      {/* FAQ Section */}
+      <FAQSection />
+
+      {/* Final CTA */}
+      <FinalCTA onConvertClick={scrollToConverter} />
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card mt-16">
-        <div className="container mx-auto px-4 py-6">
-          <p className="text-center text-sm text-muted-foreground">
-            Built for accurate and transparent grade conversion across African and European education systems
-          </p>
-          <div className="container mx-auto px-4 py-6">
-          <p className="text-center text-sm text-muted-foreground">
-            Don't let wrong grade calculations hinder your Europe Admissions!! @Ectstogradesconverter
-          </p>
-          </div>
-        </div>
-      </footer>
-    </div>;
+      <Footer />
+    </div>
+  );
 };
+
 export default Index;
