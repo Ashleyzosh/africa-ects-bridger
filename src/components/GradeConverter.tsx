@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Info, Calculator, Award } from "lucide-react";
-import { getGradingScaleByUniversity } from "@/data/gradingData";
+import { AlertCircle, Info, Calculator, Award, Download, FileText } from "lucide-react";
+import { getGradingScaleByUniversity, COUNTRIES } from "@/data/gradingData";
 import { convertToECTS, ConversionResult } from "@/lib/conversionEngine";
 import { CountryUniversitySelector } from "@/components/shared/CountryUniversitySelector";
+import { generateGradeConversionPDF } from "@/lib/pdfExport";
 
 export function GradeConverter() {
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -124,9 +125,29 @@ export function GradeConverter() {
         {result && (
           <Card className="border-primary/20 bg-primary/5">
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg">ECTS Conversion Result</CardTitle>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Award className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg">ECTS Conversion Result</CardTitle>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const countryData = COUNTRIES.find(c => c.code === selectedCountry || c.id === selectedCountry);
+                    generateGradeConversionPDF({
+                      result,
+                      universityName: selectedUniversity,
+                      countryName: countryData?.name || selectedCountry,
+                      studentGrade: inputGrade
+                    });
+                  }}
+                  className="gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Export PDF</span>
+                  <FileText className="h-4 w-4 sm:hidden" />
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -158,6 +179,14 @@ export function GradeConverter() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Premium Feature Badge */}
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-accent/50 border border-accent-foreground/20">
+                <FileText className="h-4 w-4 text-primary" />
+                <p className="text-sm text-foreground">
+                  <span className="font-medium">PDF Export</span> — Download your conversion result with branded letterhead for university applications.
+                </p>
               </div>
             </CardContent>
           </Card>
