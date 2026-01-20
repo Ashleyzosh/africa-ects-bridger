@@ -33,7 +33,7 @@ export const Footer = () => {
                 <Linkedin className="h-5 w-5" />
               </a>
               <a 
-                href="mailto:support@gradestoects.com" 
+                href="mailto:ectsgradeconverter@gmail.com" 
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="Email"
               >
@@ -95,7 +95,7 @@ export const Footer = () => {
           <p className="text-sm text-muted-foreground">
             Don't let wrong grade calculations hinder your Europe Admissions! 
             <a href="https://twitter.com/ectstogradesconverter" className="text-primary ml-1 hover:underline">
-              @Ectstogradesconverter
+              Ectstogradeconverter@gmail.com
             </a>
           </p>
         </div>
