@@ -119,10 +119,22 @@ export function CumulativeGPACalculator() {
       // Get cumulative result without weights for the letter grade
       const cumulativeResult = calculateCumulativeECTS(conversions);
 
+      // Build semester results for PDF export
+      const semesterResults = semesterGrades.map((sg, idx) => ({
+        semester: `Semester ${sg.semester}`,
+        grade: parseFloat(sg.grade),
+        ectsGrade: conversions[idx].ectsLetter,
+        ectsNumeric: conversions[idx].ectsNumeric,
+      }));
+
       // Override with weighted average
       setResult({
         ...cumulativeResult,
         averageNumeric: parseFloat(weightedAverage.toFixed(2)),
+        semesterResults,
+        universityName: selectedUniversity,
+        countryName: selectedCountry,
+        programYears: parseInt(programYears) || 4,
       });
       setCurrentStep(4);
     } catch (err: any) {
@@ -195,6 +207,10 @@ export function CumulativeGPACalculator() {
             letterGrade={result.letterGrade}
             classification={result.classification}
             onReset={handleReset}
+            semesterResults={result.semesterResults}
+            universityName={result.universityName}
+            countryName={result.countryName}
+            programYears={result.programYears}
           />
         )}
       </CardContent>
