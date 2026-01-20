@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, BookOpen, TrendingUp } from 'lucide-react';
 
 // Landing page sections
+import { Header } from '@/components/landing/Header';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { ValueProposition } from '@/components/landing/ValueProposition';
 import { HowItWorks } from '@/components/landing/HowItWorks';
@@ -18,10 +19,15 @@ import { Footer } from '@/components/landing/Footer';
 
 const Index = () => {
   const converterRef = useRef<HTMLDivElement>(null);
+  const howItWorksRef = useRef<HTMLDivElement>(null);
   const ectsRef = useRef<HTMLDivElement>(null);
 
   const scrollToConverter = () => {
     converterRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToHowItWorks = () => {
+    howItWorksRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const scrollToECTS = () => {
@@ -30,17 +36,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <HeroSection 
-        onConvertClick={scrollToConverter}
-        onLearnMoreClick={scrollToECTS}
+      {/* Fixed Header */}
+      <Header 
+        onConverterClick={scrollToConverter}
+        onHowItWorksClick={scrollToHowItWorks}
       />
+
+      {/* Hero Section - add padding for fixed header */}
+      <div className="pt-16">
+        <HeroSection 
+          onConvertClick={scrollToConverter}
+          onLearnMoreClick={scrollToECTS}
+        />
+      </div>
 
       {/* Value Proposition */}
       <ValueProposition />
 
       {/* How It Works */}
-      <HowItWorks />
+      <div ref={howItWorksRef}>
+        <HowItWorks />
+      </div>
 
       {/* Main Converter Tool */}
       <section ref={converterRef} id="converter" className="py-16 bg-card border-y border-border">
