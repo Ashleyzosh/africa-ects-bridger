@@ -2,13 +2,25 @@ import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, RotateCcw } from "lucide-react";
+import { CheckCircle2, RotateCcw, FileDown } from "lucide-react";
+import { generateCumulativeGPAPDF } from "@/lib/pdfExport";
+
+interface SemesterResult {
+  semester: string;
+  grade: number;
+  ectsGrade: string;
+  ectsNumeric: number;
+}
 
 interface ResultsStepProps {
   averageNumeric: number;
   letterGrade: string;
   classification: string;
   onReset: () => void;
+  semesterResults?: SemesterResult[];
+  universityName?: string;
+  countryName?: string;
+  programYears?: number;
 }
 
 export function ResultsStep({
@@ -16,7 +28,23 @@ export function ResultsStep({
   letterGrade,
   classification,
   onReset,
+  semesterResults = [],
+  universityName = "",
+  countryName = "",
+  programYears = 4,
 }: ResultsStepProps) {
+  const handleExportPDF = () => {
+    generateCumulativeGPAPDF({
+      results: semesterResults,
+      averageNumeric,
+      letterGrade,
+      classification,
+      universityName,
+      countryName,
+      programYears,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <Alert className="border-primary/20 bg-primary/5">
@@ -46,10 +74,16 @@ export function ResultsStep({
         </div>
       </Card>
 
-      <Button onClick={onReset} variant="outline" className="w-full">
-        <RotateCcw className="mr-2 h-4 w-4" />
-        Start New Calculation
-      </Button>
+      <div className="flex flex-col gap-3">
+        <Button onClick={handleExportPDF} className="w-full">
+          <FileDown className="mr-2 h-4 w-4" />
+          Export PDF Report
+        </Button>
+        <Button onClick={onReset} variant="outline" className="w-full">
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Start New Calculation
+        </Button>
+      </div>
     </div>
   );
 }
